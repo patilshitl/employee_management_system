@@ -5,21 +5,21 @@ function Home() {
   return (
     <>
         <div className='container'>
-            <div className='card m-3 heading p-5'>
+            <div className='card m-3 heading p-5 rounded-5'>
                 <h1>Employee Management System</h1>
-                <div className='totalEmpCount p-2 m-3'>
+                <div className='totalEmpCount p-2 m-3 rounded-2'>
                     Total Employees: 15
                 </div>
             </div>
 
-            <nav className='card m-3'>
+            <nav className='card m-3 rounded-5'>
                 <Form>
-                    <input type="search" name="" id="" placeholder='search employess'/>
-                    <button>ADD EMPLOYESS</button>
+                    <input type="search" name="" className='rounded-2 px-4 py-2' id="" placeholder='search employess'/>
+                    <button className='btn addEmpBtn'>+ ADD EMPLOYESS</button>
                 </Form>
             </nav>
 
-            <div className='m-3'>
+            <div className='m-3 row display-flex rounded-5 card'>
                 <table>
                     <tbody>
                         <tr>
@@ -36,7 +36,7 @@ function Home() {
                             <td>Shweta</td>
                             <td>Developer</td>
                             <td>26000</td>
-                            <td>
+                            <td className='d-flex align-items-center justify-content-between'>
                                 <button className='btn btn-secondary'>Details</button>
                                 <button className='btn btn-primary'>Edit</button>
                                 <button className='btn btn-danger'>Delete</button>

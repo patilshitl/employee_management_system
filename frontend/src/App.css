@@ -57,3 +57,16 @@ body{
     color: #fff;
     font-weight: 600;
 }
+
+.addEmpBtn{
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    width: 22%;
+    color: #fff !important;
+    font-weight: 600 !important;
+}
+
+.card form{
+  display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
