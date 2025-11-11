@@ -27,7 +27,20 @@ app.get("/", (req, res) => {
 })
 
 app.post("/", (req, res) => {
-    sql = `INSERT INTO shital_ems (id, name, manager, department, salary) VALUES (NULL, '${empName}', '${manager}', '${department}', '${salary}')`
+    try {
+        let {name: name, department:department, salary: salary, manager_id: manager_id} = req.body;
+        if(!name || !department || !salary || !manager_id){
+            res.status(400).send("All Feild is required");
+        }
+        const sql = `INSERT INTO shital_ems (id, name, manager, department, salary, created_at, updtaed_at) VALUES (NULL, '${name}', '${manager}', '${department}', '${salary}', NOW(), NOW())`
+        dbconn.query(sql, (err, result) => {
+            console.log(result);
+            res.send("Employee added succefully")
+        })
+    } catch (error) {
+        res.status(500).send("server error");
+    }
+    
 })
 
 app.listen(3001, () => {
