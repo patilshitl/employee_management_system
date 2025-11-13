@@ -32,7 +32,7 @@ app.post("/", (req, res) => {
         if(!name || !department || !salary || !manager_id){
             res.status(400).send("All Feild is required");
         }
-        const sql = `INSERT INTO shital_ems (id, name, manager, department, salary, created_at, updtaed_at) VALUES (NULL, '${name}', '${manager}', '${department}', '${salary}', NOW(), NOW())`
+        const sql = `INSERT INTO shital_ems (id, name, manager, department, salary, created_at, updated_at) VALUES (NULL, '${name}', '${manager}', '${department}', '${salary}', NOW(), NOW())`
         dbconn.query(sql, (err, result) => {
             console.log(result);
             res.send("Employee added succefully")
@@ -41,6 +41,10 @@ app.post("/", (req, res) => {
         res.status(500).send("server error");
     }
     
+})
+
+app.delete("/", (req, res) => {
+    var 
 })
 
 app.listen(3001, () => {

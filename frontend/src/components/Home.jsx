@@ -5,6 +5,13 @@ import { Form, Button, Modal  } from 'react-bootstrap'
 
 function Home() {
     const [empData, setEmpData] = useState([]);
+    const [empFormData, setEmpFormData] = useState([
+        name = "",
+        manager_id = "",
+        department = "",
+        salary = "",
+    ])
+
 
     const fetchEmpData = () => {
         axios.get("http://localhost:3001/")
@@ -15,6 +22,33 @@ function Home() {
     useEffect(() => {
         fetchEmpData();
     }, []);
+
+    const handleChange = (e) => {
+        setEmpFormData({
+        ...empFormData,
+        [e.target.name]: e.target.value,
+        });
+    };
+
+    const addEmployee = (e) => {
+        e.preventDefault();
+
+        axios
+        .post("http://localhost:3001/", formData)
+        .then((res) => {
+            alert(res.data);
+            setEmpFormData({
+            name: "",
+            manager_id: "",
+            department: "",
+            salary: "",
+            });
+        })
+        .catch((err) => {
+            if (err.response) alert(err.response.data);
+            else alert("Server not reachable");
+        });
+    };
 
   return (
     <>
@@ -68,9 +102,9 @@ function Home() {
 
         <div className='addEmploForm'>
             <Form>
-                <input type="search" name="" className='rounded-2 px-4 py-2' id="" placeholder='name'/>
+                <input type="search" name="name" className='rounded-2 px-4 py-2' id="" placeholder='name'/>
 
-                <select name="" id="" placeholder='manager'>
+                <select name="manager_id" id="" placeholder='manager'>
                     {empData.map((list)=>
                         <option value={list.id} key={list.id}>
                             {list.name}
@@ -78,12 +112,12 @@ function Home() {
                     )}
                 </select>
 
-                <select name="" id="" placeholder='department'>
+                <select name="department" id="" placeholder='department'>
                     <option value="IT">IT</option>
                     <option value="HR">HR</option>
                 </select>
 
-                <input type="num" name="" id="" placeholder='salary' className='rounded-2 px-4 py-2' />
+                <input type="num" name="salary" id="" placeholder='salary' className='rounded-2 px-4 py-2' />
 
                 <button className='btn addEmpBtn' type="button">+ ADD EMPLOYESS</button>
             </Form>
