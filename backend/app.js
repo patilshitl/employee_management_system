@@ -32,7 +32,7 @@ app.post("/", (req, res) => {
         if(!name || !department || !salary || !manager_id){
             res.status(400).send("All Feild is required");
         }
-        const sql = `INSERT INTO shital_ems (id, name, manager, department, salary, created_at, updated_at) VALUES (NULL, '${name}', '${manager}', '${department}', '${salary}', NOW(), NOW())`
+        const sql = `INSERT INTO shital_ems (id, name, manager_id, department, salary, created_at, updated_at) VALUES (NULL, '${name}', '${manager_id}', '${department}', '${salary}', NOW(), NOW())`
         dbconn.query(sql, (err, result) => {
             console.log(result);
             res.send("Employee added succefully")
@@ -43,9 +43,52 @@ app.post("/", (req, res) => {
     
 })
 
-app.delete("/", (req, res) => {
-    var 
-})
+app.delete("/:id", (req, res) => {
+    const {id} = req.params;
+
+    if(!id){
+        return res.status(400).send("Employee ID is required");
+    }
+
+    const sql = "DELETE FROM shital_ems WHERE id = ?";
+
+    dbconn.query(sql, [id], (err, result) => {
+        if(err){
+            console.log(err);
+            return res.status(500).send("Database Error");
+            
+        }
+
+        if(result.affectedRows == 0){
+            return res.status(400).send("Employee Not Found");
+        }
+
+        res.send("Employess Deleted Sucessfully");
+    });
+});
+
+app.put("/:id", (req, res) => {
+    const {id} = req.params;
+
+    if(!id){
+        return res.status(400).send("Employee ID is Required");
+    }
+
+    const sql = "UPDATE FROM shital_ems WHERE id = ?";
+
+    dbconn.query(sql, [id], (err, result)=> {
+        if(err){
+            console.log(err);
+            return res.status(500).send("Database Error");
+        }
+        
+        if(result.affectedRows == 0){
+            return res.status(400).send("Employee not found");
+        }
+
+        res.send("Employee data Updated")
+    })
+});
 
 app.listen(3001, () => {
     console.log("server running on port 3001");
