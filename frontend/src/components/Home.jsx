@@ -5,6 +5,7 @@ import { Form, Button, Modal  } from 'react-bootstrap'
 
 function Home() {
     const [empData, setEmpData] = useState([]);
+
     const [empFormData, setEmpFormData] = useState({
         name : "",
         manager_id : "",
@@ -13,7 +14,15 @@ function Home() {
     })
 
     const [showForm, setShowForm] = useState(false);
-    const [showEditForm, setShowEditForm] = useState(false)
+    const [showEditForm ,setShowEditForm] = useState(false);
+
+    const [editEmpl, setEditEmpl] = useState({
+        id: "",
+        name : "",
+        manager_id : "",
+        department : "",
+        salary : "",
+    })
 
 
     const fetchEmpData = () => {
@@ -30,6 +39,13 @@ function Home() {
         setEmpFormData({
         ...empFormData,
         [e.target.name]: e.target.value,
+        });
+    };
+
+    const editHandleChnage = (e) =>{
+        setEditEmpl({
+            ...editEmpl,
+            [e.target.name]: e.target.value,
         });
     };
 
@@ -64,12 +80,17 @@ function Home() {
         });
     };
 
-    const openEditForm = (id) =>{
-
+    const openEditForm = (empl) =>{
+        setEditEmpl({
+        id: "empl.id",
+        name : "empl.name",
+        manager_id : "empl.manager_id",
+        department : "empl.department",
+        salary : "empl.salary",
+        })
+        setShowEditForm(true); 
     }
-    // const editEmployee = (id) => {
-
-    // }
+    
 
   return (
     <>
@@ -108,7 +129,7 @@ function Home() {
                                 <td>{list.salary}</td>
                                 <td className='d-flex align-items-center justify-content-between'>
                                     <button className='btn btn-secondary'>Details</button>
-                                    <button className='btn btn-primary' onClick={() => setShowEditForm(true)}>Edit</button>
+                                    <button className='btn btn-primary' onClick={() => openEditForm(list)}>Edit</button>
                                     <button className='btn btn-danger' onClick={() => deleteEmployee(list.id)}>Delete</button>
                                 </td>
                             </tr>
@@ -198,7 +219,7 @@ function Home() {
 
         {showEditForm && (
             <div className='addEmploForm' id='addEmploForm'>
-                <Form onSubmit={editEmployee}>
+                <Form onSubmit={openEditForm}>
                     <div className="row">
 
                         <div className="col-lg-6 mb-3">
@@ -206,16 +227,16 @@ function Home() {
                                 type="text" 
                                 name="name" 
                                 className="form-control rounded-2 px-4 py-2" 
-                                placeholder="Name"
-                                onChange={handleChange}
+                                placeholder="Name" value={editEmpl.name}
+                                onChange={editHandleChnagehandleChange}
                             />
                         </div>
 
                         <div className="col-lg-6 mb-3">
                             <select 
                                 name="manager_id" 
-                                className="form-select rounded-2 px-4 py-2"
-                                onChange={handleChange}
+                                className="form-select rounded-2 px-4 py-2" value={editEmpl.manager_id}
+                                onChange={editHandleChnage}
                             >
                                 <option value="">Select Manager</option>
                                 {empData.map((list) => (
@@ -230,7 +251,7 @@ function Home() {
                             <select 
                                 name="department" 
                                 className="form-select rounded-2 px-4 py-2"
-                                onChange={handleChange}
+                               value={editEmpl.department}    onChange={handleEditChange}
                             >
                                 <option value="">Select Department</option>
                                 <option value="IT">IT</option>
@@ -244,7 +265,7 @@ function Home() {
                                 name="salary" 
                                 className="form-control rounded-2 px-4 py-2" 
                                 placeholder="Salary"
-                                onChange={handleChange}
+                                value={editEmpl.salary}    onChange={handleEditChange}
                             />
                         </div>
 
