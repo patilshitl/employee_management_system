@@ -2,10 +2,11 @@ import React from 'react'
 import axios from 'axios'
 import {useState, useEffect} from 'react'
 import { Form, Button, Modal  } from 'react-bootstrap'
+import Swal from "sweetalert2";
 
 function Home() {
     const [empData, setEmpData] = useState([]);
-
+    const [search, setSearch] = useState("");
     const [empFormData, setEmpFormData] = useState({
         name : "",
         manager_id : "",
@@ -24,13 +25,22 @@ function Home() {
         salary : "",
     })
 
-
     const fetchEmpData = () => {
         axios.get("http://localhost:3001/")
         .then((res) => {
-            setEmpData(res.data)
+            setEmpData(Array.isArray(res.data) ? res.data : []);
         })
-    }
+        .catch(() => setEmpData([]));
+    };
+
+    const filteredEmployees = empData.filter((emp) =>
+        emp.name.toLowerCase().includes(search.toLowerCase())
+    );
+
+
+    
+
+
     useEffect(() => {
         fetchEmpData();
     }, []);
@@ -55,7 +65,14 @@ function Home() {
         axios
         .post("http://localhost:3001/", empFormData)
         .then((res) => {
-            alert(res.data);
+            Swal.fire({
+                    icon: "success",
+                    title: "Updated!",
+                    text: res.send,
+                    timer: 1200,
+                    showConfirmButton: false
+                });
+
             setEmpFormData({
             name: "",
             manager_id: "",
@@ -73,7 +90,7 @@ function Home() {
         axios.delete(`http://localhost:3001/${id}`)
         .then((res) => {
             alert(res.data);
-            fetchEmpData;
+            fetchEmpData();
         }) 
         .catch((err)=>{
             alert("Error Deleting Employee");
@@ -82,14 +99,39 @@ function Home() {
 
     const openEditForm = (empl) =>{
         setEditEmpl({
-        id: "empl.id",
-        name : "empl.name",
-        manager_id : "empl.manager_id",
-        department : "empl.department",
-        salary : "empl.salary",
+        id: empl.id,
+        name : empl.name,
+        manager_id : empl.manager_id,
+        department : empl.department,
+        salary : empl.salary,
         })
         setShowEditForm(true); 
     }
+
+    const updateEmployee = (e) => {
+        e.preventDefault();
+
+        axios.put(`http://localhost:3001/${editEmpl.id}`, editEmpl)
+            .then(() => {
+                Swal.fire({
+                    icon: "success",
+                    title: "Updated!",
+                    text: "Employee details updated successfully.",
+                    timer: 1200,
+                    showConfirmButton: false
+                });
+
+                setShowEditForm(false);
+                fetchEmpData();
+            })
+            .catch(() => {
+                Swal.fire({
+                    icon: "error",
+                    title: "Failed",
+                    text: "Could not update employee data."
+                });
+            });
+    };
     
 
   return (
@@ -104,7 +146,7 @@ function Home() {
 
             <nav className='card m-3 rounded-5'>
                 <Form>
-                    <input type="search" name="" className='rounded-2 px-4 py-2' id="" placeholder='search employess'/>
+                    <input type="search" name="" className='rounded-2 px-4 py-2' id="" placeholder='search employess' onChange={(e) => setSearch(e.target.value)}/>
                     <button className='btn addEmpBtn' type="button" onClick={() => setShowForm(true)}>+ ADD EMPLOYESS</button>
                 </Form>
             </nav>
@@ -120,7 +162,7 @@ function Home() {
                             <th>SALARY</th>
                             <th>ACTION</th>
                         </tr>
-                        {empData.map((list)=>
+                        {filteredEmployees.map((list)=>
                             <tr key={list.id}>
                                 <td>{list.id}</td>
                                 <td>{list.name}</td>
@@ -139,8 +181,7 @@ function Home() {
             </div>
         </div>
 
-        {/* Employee Add Modal */}
-        
+        {/* Employee Add Modal */} 
 
         {showForm && (
             <div className='addEmploForm' id='addEmploForm'>
@@ -199,7 +240,6 @@ function Home() {
                                 + ADD EMPLOYEE
                             </button>
 
-                            {/* ❌ Cancel Button — hides the form */}
                             <button 
                                 type="button" 
                                 className="btn btn-danger"
@@ -219,7 +259,7 @@ function Home() {
 
         {showEditForm && (
             <div className='addEmploForm' id='addEmploForm'>
-                <Form onSubmit={openEditForm}>
+                <Form onSubmit={updateEmployee}>
                     <div className="row">
 
                         <div className="col-lg-6 mb-3">
@@ -228,7 +268,7 @@ function Home() {
                                 name="name" 
                                 className="form-control rounded-2 px-4 py-2" 
                                 placeholder="Name" value={editEmpl.name}
-                                onChange={editHandleChnagehandleChange}
+                                onChange={editHandleChnage}
                             />
                         </div>
 
@@ -251,7 +291,7 @@ function Home() {
                             <select 
                                 name="department" 
                                 className="form-select rounded-2 px-4 py-2"
-                               value={editEmpl.department}    onChange={handleEditChange}
+                               value={editEmpl.department} onChange={editHandleChnage}
                             >
                                 <option value="">Select Department</option>
                                 <option value="IT">IT</option>
@@ -265,7 +305,7 @@ function Home() {
                                 name="salary" 
                                 className="form-control rounded-2 px-4 py-2" 
                                 placeholder="Salary"
-                                value={editEmpl.salary}    onChange={handleEditChange}
+                                value={editEmpl.salary}    onChange={editHandleChnage}
                             />
                         </div>
 
@@ -274,7 +314,6 @@ function Home() {
                                 + ADD EMPLOYEE
                             </button>
 
-                            {/* ❌ Cancel Button — hides the form */}
                             <button 
                                 type="button" 
                                 className="btn btn-danger"
