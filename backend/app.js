@@ -20,11 +20,15 @@ dbconn.connect((err)=> {
 })
 
 app.get("/", (req, res) => {
-    sql = `SELECT * FROM shital_employees`
+    const sql = "SELECT * FROM shital_ems";
+
     dbconn.query(sql, (err, result) => {
-        res.send(result)
-    })
-})
+        if (err) {
+            return res.status(500).send("Database error");
+        }
+        res.json(result); 
+    });
+});
 
 app.post("/", (req, res) => {
     try {
@@ -68,27 +72,35 @@ app.delete("/:id", (req, res) => {
 });
 
 app.put("/:id", (req, res) => {
-    const {id} = req.params;
+    const { id } = req.params;
+    const { name, manager_id, department, salary } = req.body;
 
-    if(!id){
-        return res.status(400).send("Employee ID is Required");
+    if (!id) {
+        return res.status(400).send("Employee ID is required");
     }
 
-    const sql = "UPDATE FROM shital_ems WHERE id = ?";
+    const sql = `
+        UPDATE shital_ems 
+        SET name = ?, manager_id = ?, department = ?, salary = ?
+        WHERE id = ?
+    `;
 
-    dbconn.query(sql, [id], (err, result)=> {
-        if(err){
+    const values = [name, manager_id, department, salary, id];
+
+    dbconn.query(sql, values, (err, result) => {
+        if (err) {
             console.log(err);
             return res.status(500).send("Database Error");
         }
-        
-        if(result.affectedRows == 0){
+
+        if (result.affectedRows === 0) {
             return res.status(400).send("Employee not found");
         }
 
-        res.send("Employee data Updated")
-    })
+        res.send("Employee data updated successfully");
+    });
 });
+
 
 app.listen(3001, () => {
     console.log("server running on port 3001");
